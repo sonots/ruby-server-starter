@@ -19,7 +19,7 @@ By using ```start_server``` it is much easier to write a hot-deployable server. 
 
 # Unicorn
 
-Following is an example to run uniocorn server under ```Server::Starter```.
+Following is an example to run unicorn server under ```Server::Starter```.
 
 The command line example:
 
