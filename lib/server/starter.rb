@@ -1,6 +1,6 @@
 require 'socket'
 require 'fcntl'
-require 'proc/wait3'
+require 'timeout'
 require 'server/starter/version'
 require 'server/starter/helper'
 
@@ -126,7 +126,10 @@ class Server::Starter
 
     # setup signal handlers
     %w(INT TERM HUP ALRM).each do |signal|
-      Signal.trap(signal) { @signals_received.push(signal) }
+      Signal.trap(signal) {
+        @signals_received.push(signal)
+        @signal_wait_thread.kill if @signal_wait_thread
+      }
     end
     Signal.trap('PIPE') { 'IGNORE' }
 
@@ -192,27 +195,40 @@ class Server::Starter
     # setup the wait function
     wait = Proc.new {
       flags = @signals_received.empty? ? 0 : Process::WNOHANG
-      # wait, or waitpid can not get EINTR on receiving signal, but wait3 can
-      begin
-        r = nil
+      r = nil
+      # waitpid can not get EINTR on receiving signal, so create a thread,
+      # and kill the thread on receiving signal to exit blocking
+      #
+      # there is another way to use wait3 which raises EINTR on receiving signal,
+      # but proc-wait3 gem requires gcc, etc to compile its C codes.
+      #
+      #     require 'proc/wait3'
+      #     begin
+      #       rusage = Process.wait3(flags)
+      #       r = [rusage.pid, rusage.status] if rusage
+      #     rescue Errno::EINTR
+      #       sleep 0.1 # need to wait until Signal.trap finishes its operation, terrible
+      #       nil
+      #     end
+      @signal_wait_thread = Thread.start do
         if flags != 0 && ENV['ENABLE_AUTO_RESTART']
           begin
             timeout(1) do
-              rusage = Process.wait3(flags)
-              r = [rusage.pid, rusage.status] if rusage
+              pid = Process.waitpid(-1, flags)
+              r = [pid, $?.exitstatus] if pid
             end
           rescue Timeout::Error
-            Process.kill('ALRM', Process.pid)
+            # Process.kill('ALRM', Process.pid)
+            Thread.exit
           end
         else
-          rusage = Process.wait3(flags)
-          r = [rusage.pid, rusage.status] if rusage
+          pid = Process.waitpid(-1, flags)
+          r = [pid, $?.exitstatus] if pid
         end
-        r
-      rescue Errno::EINTR
-        sleep 0.1 # seems we need to wait a bit until Signal.trap is performed
-        nil
       end
+      @signal_wait_thread.join
+      @signal_wait_thread = nil
+      r
     }
 
     # setup the cleanup function
