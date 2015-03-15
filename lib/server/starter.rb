@@ -192,6 +192,7 @@ class Server::Starter
     # setup the wait function
     wait = Proc.new {
       flags = @signals_received.empty? ? 0 : Process::WNOHANG
+      # wait, or waitpid can not get EINTR on receiving signal, but wait3 can
       begin
         r = nil
         if flags != 0 && ENV['ENABLE_AUTO_RESTART']
@@ -208,8 +209,8 @@ class Server::Starter
           r = [rusage.pid, rusage.status] if rusage
         end
         r
-      rescue Errno::EINTR # Signal trapped
-        sleep 0.1 # seems to need to wait Signal.trap pushes to @signals_received
+      rescue Errno::EINTR
+        sleep 0.1 # seems we need to wait a bit until Signal.trap is performed
         nil
       end
     }
