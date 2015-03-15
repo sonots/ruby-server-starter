@@ -1,0 +1,16 @@
+#!/bin/sh
+bundle exec start_server.rb \
+  --port=0.0.0.0:10080 \
+  --dir=$(pwd) \
+  --interval=1 \
+  --signal-on-hup=CONT \
+  --signal-on-TERM=TERM \
+  --pid-file=$(pwd)/log/start_server.pid \
+  --status-file=$(pwd)/log/unicorn.stat \
+  --envdir=env \
+  --enable-auto-restart \
+  --auto-restart-interval=100 \
+  --kill-old-delay=10 \
+  --backlog=100 \
+  -- \
+  bundle exec --keep-file-descriptors unicorn -c config/unicorn.conf config.ru 2>&1

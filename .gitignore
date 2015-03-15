@@ -1,0 +1,17 @@
+/*.gem
+~*
+#*
+*~
+.bundle
+Gemfile.lock
+.rbenv-version
+vendor
+doc/*
+tmp/*
+coverage
+.yardoc
+.ruby-version
+pkg/*
+.tags
+unicorn.stat
+start_server.pid

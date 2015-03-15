@@ -1,0 +1,6 @@
+source "http://rubygems.org"
+
+gem 'server-starter', path: '../'
+gem 'unicorn'
+gem 'pry'
+gem 'pry-nav'
