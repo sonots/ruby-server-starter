@@ -1,5 +1,6 @@
 require 'socket'
 require 'fcntl'
+require 'proc/wait3'
 require 'server/starter/version'
 require 'server/starter/helper'
 
@@ -190,22 +191,27 @@ class Server::Starter
 
     # setup the wait function
     wait = Proc.new {
-      flags = @signals_received.empty? ? Process::WNOHANG : 0
-      r = nil
-      if flags != 0 && ENV['ENABLE_AUTO_RESTART']
-        begin
-          timeout(1) do
-            pid = Process.waitpid(-1, flags)
-            r = [pid, $?.exitstatus] if pid
+      flags = @signals_received.empty? ? 0 : Process::WNOHANG
+      begin
+        r = nil
+        if flags != 0 && ENV['ENABLE_AUTO_RESTART']
+          begin
+            timeout(1) do
+              rusage = Process.wait3(flags)
+              r = [rusage.pid, rusage.status] if rusage
+            end
+          rescue Timeout::Error
+            Process.kill('ALRM', Process.pid)
           end
-        rescue Timeout::Error
-          Process.kill('ALRM', Process.pid)
+        else
+          rusage = Process.wait3(flags)
+          r = [rusage.pid, rusage.status] if rusage
         end
-      else
-        pid = Process.waitpid(-1, flags)
-        r = [pid, $?.exitstatus] if pid
+        r
+      rescue Errno::EINTR # Signal trapped
+        sleep 0.1 # seems to need to wait Signal.trap pushes to @signals_received
+        nil
       end
-      r
     }
 
     # setup the cleanup function
@@ -334,12 +340,12 @@ class Server::Starter
     }.call
 
     # send HUP
-    Process.kill('HUP', pid) rescue die $!, "failed to send SIGHUP to the server process"
+    Process.kill('HUP', pid.to_i) rescue die $!, "failed to send SIGHUP to the server process"
 
     # wait for the generation
     while true
       gens = get_generations.call
-      break if gens.size == 1 && gens[0] == wait_for
+      break if gens.size == 1 && gens[0].to_i == wait_for.to_i
       sleep 1
     end
   end

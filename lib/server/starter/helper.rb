@@ -22,11 +22,11 @@ class Server
       end
 
       def with_local_env(local_env, &block)
-        orig_env = ENV.to_hash
+        orig_env = local_env.keys.map {|k| [k, ENV[k]] }.to_h
         ENV.update(local_env)
         yield
       ensure
-        ENV.replace(orig_env)
+        ENV.update(orig_env)
       end
 
       def bundler_with_clean_env(&block)
