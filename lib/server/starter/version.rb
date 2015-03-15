@@ -1,5 +1,5 @@
 class Server
   class Starter
-    VERSION = '0.0.1'
+    VERSION = '0.0.2'
   end
 end
