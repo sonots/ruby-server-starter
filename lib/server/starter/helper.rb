@@ -10,12 +10,10 @@ class Server
         exit 1
       end
 
-      def die(*args)
-        if args.size == 2
-          e, msg = args[0], args[1]
-          $stderr.puts "#{msg}:#{e.class} #{e.message}"
+      def die(msg)
+        if $!
+          $stderr.puts "#{msg}:#{$!.class} #{$!.message}"
         else
-          msg = args[0]
           $stderr.puts msg
         end
         exit 1

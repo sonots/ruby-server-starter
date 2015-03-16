@@ -47,7 +47,7 @@ class Server::Starter
     if opts[:pid_file]
       File.open(opts[:pid_file], "w") do |fh|
         fh.puts $$
-      end rescue die $!, "failed to open file:#{opts[:pid_file]}"
+      end rescue die "failed to open file:#{opts[:pid_file]}"
       at_exit { File.unlink opts[:pid_file] rescue nil }
     end
 
@@ -56,8 +56,8 @@ class Server::Starter
       File.open(opts[:log_file], "a") do |fh|
         $stdout.flush
         $stderr.flush
-        $stdout.reopen(fh) rescue die $!, "failed to reopen STDOUT to file"
-        $stderr.reopen(fh) rescue die $!, "failed to reopen STDERR to file"
+        $stdout.reopen(fh) rescue die "failed to reopen STDOUT to file"
+        $stderr.reopen(fh) rescue die "failed to reopen STDERR to file"
       end
     end
 
@@ -92,9 +92,9 @@ class Server::Starter
           croak "invalid ``port'' value:#{port}"
         end
       rescue
-        die $!, "failed to listen to #{port}"
+        die "failed to listen to #{port}"
       end
-      sock.fcntl(Fcntl::F_SETFD, 0) rescue die $!, "fcntl(F_SETFD, 0) failed"
+      sock.fcntl(Fcntl::F_SETFD, 0) rescue die "fcntl(F_SETFD, 0) failed"
       sockenvs.push "#{port}=#{sock.fileno}"
       socks.push sock
     end
@@ -107,7 +107,7 @@ class Server::Starter
     paths.each do |path|
       if File.symlink?(path)
         warn "removing existing socket file:#{path}"
-        File.unlink(path) rescue die $!, "failed to remove existing socket file:#{path}"
+        File.unlink(path) rescue die "failed to remove existing socket file:#{path}"
       end
       File.unlink(path) rescue nil
       saved_umask = File.umask(0)
@@ -115,9 +115,9 @@ class Server::Starter
         sock = UNIXServer.new(path)
         sock.listen(opts[:backlog])
       rescue
-        die $!, "failed to listen to file #{path}"
+        die "failed to listen to file #{path}"
       end
-      sock.fcntl(Fcntl::F_SETFD, 0) rescue die $!, "fcntl(F_SETFD, 0) failed"
+      sock.fcntl(Fcntl::F_SETFD, 0) rescue die "fcntl(F_SETFD, 0) failed"
       sockenvs.push "path=#{sock.fileno}"
       socks.push sock
     end
@@ -144,11 +144,11 @@ class Server::Starter
               {}
             @old_workers.each {|pid, gen| gen_pids[gen] = pid }
             gen_pids.keys.map(&:to_i).sort.each {|gen| tmpfh.puts "#{gen}:#{gen_pids[gen.to_s]}" }
-          end rescue die $!, "failed to create temporary file:#{tmpfn}"
+          end rescue die "failed to create temporary file:#{tmpfn}"
           begin
             File.rename(tmpfn, opts[:status_file])
           rescue
-            die $!, "failed to rename #{tmpfn} to #{opts[:status_file]}"
+            die "failed to rename #{tmpfn} to #{opts[:status_file]}"
           end
         }
       else
@@ -163,12 +163,12 @@ class Server::Starter
         begin
           pid = fork
         rescue
-          die $!, "fork(2) failed"
+          die "fork(2) failed"
         end
         if pid.nil? # child process
           args = Array(opts[:exec]).dup
           if opts[:dir]
-            Dir.chdir opts[:dir] rescue die $!, "failed to chdir"
+            Dir.chdir opts[:dir] rescue die "failed to chdir"
           end
           begin
             bundler_with_clean_env do
@@ -334,7 +334,7 @@ class Server::Starter
           line.chomp
         end
       rescue
-        die $!, "failed to open file:#{opts[:pid_file]}"
+        die "failed to open file:#{opts[:pid_file]}"
       end
     }.call
 
@@ -345,7 +345,7 @@ class Server::Starter
           line =~ /^(\d+):/ ? $1 : nil
         end.compact.map(&:to_i).sort.uniq
       rescue
-        die $!, "failed to open file:#{opts[:status_file]}"
+        die "failed to open file:#{opts[:status_file]}"
       end
     }
 
@@ -357,7 +357,7 @@ class Server::Starter
     }.call
 
     # send HUP
-    Process.kill('HUP', pid.to_i) rescue die $!, "failed to send SIGHUP to the server process"
+    Process.kill('HUP', pid.to_i) rescue die "failed to send SIGHUP to the server process"
 
     # wait for the generation
     while true
