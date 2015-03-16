@@ -36,6 +36,10 @@ OptionParser.new do |opt|
     'name of the signal to be sent to the server process when start_server receives a SIGTERM (default: SIGTERM)',
   ) {|v| opts[:signal_on_term] = v }
   opt.on(
+    '--log-file=filename',
+    'if set, writes the log of the start_server process to the file',
+  ) {|v| opts[:log_file] = v }
+  opt.on(
     '--pid-file=filename',
     'if set, writes the process id of the start_server process to the file',
   ) {|v| opts[:pid_file] = v }

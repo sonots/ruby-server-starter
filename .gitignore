@@ -15,3 +15,4 @@ pkg/*
 .tags
 unicorn.stat
 start_server.pid
+start_server.log
