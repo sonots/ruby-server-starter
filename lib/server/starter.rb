@@ -31,7 +31,7 @@ class Server::Starter
     ports = Array(opts[:port])
     paths = Array(opts[:path])
     unless ports.empty? || paths.empty?
-      croak "either of ``port'' or ``path'' option is andatory"
+      croak "either of ``port'' or ``path'' option is mandatory"
     end
     unless opts[:exec] && opts[:exec].is_a?(Array)
       croak "mandatory option ``exec'' is missing or not an array"
@@ -92,7 +92,7 @@ class Server::Starter
           croak "invalid ``port'' value:#{port}"
         end
       rescue
-        die $!, "failed to listen to port"
+        die $!, "failed to listen to #{port}"
       end
       sock.fcntl(Fcntl::F_SETFD, 0) rescue die $!, "fcntl(F_SETFD, 0) failed"
       sockenvs.push "#{port}=#{sock.fileno}"
@@ -168,7 +168,7 @@ class Server::Starter
         if pid.nil? # child process
           args = Array(opts[:exec]).dup
           if opts[:dir]
-            Dir.chdir opts[:dir] rescue die $1, "failed to chdir"
+            Dir.chdir opts[:dir] rescue die $!, "failed to chdir"
           end
           begin
             bundler_with_clean_env do
