@@ -118,7 +118,7 @@ class Server::Starter
         die "failed to listen to file #{path}"
       end
       sock.fcntl(Fcntl::F_SETFD, 0) rescue die "fcntl(F_SETFD, 0) failed"
-      sockenvs.push "path=#{sock.fileno}"
+      sockenvs.push "#{path}=#{sock.fileno}"
       socks.push sock
     end
     ENV['SERVER_STARTER_PORT'] = sockenvs.join(";")
