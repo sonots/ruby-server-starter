@@ -75,6 +75,7 @@ end
 
 * [「Server::Starterに対応するとはどういうことか」の補足](http://blog.livedoor.jp/sonots/archives/40248661.html) (Japanese)
 * [Server::Starter で Unicorn を起動する場合の Slow Restart](http://blog.livedoor.jp/sonots/archives/42826057.html) (Japanese)
+* [Server::Starter を使って複数の Fluentd で１つのポートを待ち受ける](http://blog.livedoor.jp/sonots/archives/43219930.html) (Japanese)
 
 ## ChangeLog
 
