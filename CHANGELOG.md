@@ -1,3 +1,10 @@
+## 0.1.3 (2015/03/17)
+
+Fixes:
+
+* Fix SERVER_STARTER_PORT for unix domain socket (fix typo)
+* Add --log-file option
+
 ## 0.1.2 (2015/03/16)
 
 Fixes:
@@ -13,5 +20,4 @@ Enhancements:
 ## 0.1.0 (2015/03/16)
 
 First version
-
 
