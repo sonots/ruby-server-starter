@@ -1,3 +1,5 @@
+require 'server/starter/version'
+
 class Server::Starter
   class UnicornListener
     # Map ENV['SERVER_STARTER_PORT'] to ENV['UNICORN_FD']
