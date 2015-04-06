@@ -24,8 +24,8 @@ Following is an example to run unicorn server under ```Server::Starter```.
 The command line example:
 
 ```
-bundle exec start_server.rb --status-file=/path/to/app/log/unicorn.stat \
-  --port=10080 --signal-on-hup=CONT --dir=/path/to/app -- \
+bundle exec start_server.rb --port=10080 --signal-on-hup=CONT --dir=/path/to/app \
+  --status-file=/path/to/app/log/start_server.stat --pid-file=/path/to/app/log/start_server.pid -- \
   bundle exec --keep-file-descriptors unicorn -c config/unicorn.conf.rb config.ru
 ```
 
@@ -39,7 +39,7 @@ worker_processes  2
 preload_app true
  
 APP_ROOT = File.expand_path('../..', __FILE__)
-status_file = File.join(APP_ROOT, 'log/unicorn.stat')
+status_file = File.join(APP_ROOT, 'log/start_server.stat')
 
 fd = listener.listen
 unless fd
