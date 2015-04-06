@@ -1,3 +1,9 @@
+## 0.1.4 (2015/04/06)
+
+Fixes:
+
+* require 'server/starter/version' from UnicornListener
+
 ## 0.1.3 (2015/03/17)
 
 Fixes:
