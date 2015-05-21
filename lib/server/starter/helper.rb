@@ -27,10 +27,17 @@ class Server
         ENV.update(orig_env)
       end
 
+      # A small tweaked version of Bundler.with_clean_env
+      #
+      # Bundler has Bundler.with_clean_env by its own, but the method
+      # replace ENV with ENV captured on starting.
+      # cf. https://github.com/bundler/bundler/blob/e8c962ef2a3215cdc6fd411b6724f091a16793d6/lib/bundler.rb#L230
+      # Server::Starter changes ENV during running to communicate
+      # with child processes, so we need to keep the changed ENV.
+      # This is why I needed this small tweaked version
       def bundler_with_clean_env(&block)
         if defined?(Bundler)
           begin
-            # Bundler.with_clean_env resets ENV to initial env on loading ruby
             orig_env = ENV.to_hash
             ENV.delete_if { |k,_| k[0,7] == 'BUNDLE_' }
             if ENV.has_key? 'RUBYOPT'
