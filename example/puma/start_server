@@ -1,0 +1,16 @@
+#!/bin/sh
+bundle exec start_server.rb \
+  --port=0.0.0.0:10080 \
+  --dir=$(pwd) \
+  --interval=1 \
+  --signal-on-hup=TERM \
+  --signal-on-TERM=TERM \
+  --pid-file=$(pwd)/log/start_server.pid \
+  --status-file=$(pwd)/log/start_server.stat \
+  --envdir=env \
+  --enable-auto-restart \
+  --auto-restart-interval=100 \
+  --kill-old-delay=10 \
+  --backlog=100 \
+  -- \
+  bundle exec --keep-file-descriptors start_puma.rb puma -C config/puma.conf.rb config.ru 2>&1
