@@ -313,7 +313,7 @@ class Server::Starter
             sleep kill_old_delay
           end
           $stderr.puts "killing old workers"
-          @old_workers.keys.sort {|pid| Process.kill(opts[:signal_on_hup], pid) }
+          @old_workers.keys.sort.each {|pid| Process.kill(opts[:signal_on_hup], pid) }
         end
       end
     end
