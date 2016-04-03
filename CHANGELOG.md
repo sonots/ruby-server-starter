@@ -1,3 +1,9 @@
+## 0.1.5 (2016/04/03)
+
+Fixes:
+
+* Remove Timeout.timeout warning
+
 ## 0.1.4 (2015/04/06)
 
 Fixes:
