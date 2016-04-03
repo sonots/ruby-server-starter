@@ -213,7 +213,7 @@ class Server::Starter
       @signal_wait_thread = Thread.start do
         if flags != 0 && ENV['ENABLE_AUTO_RESTART']
           begin
-            timeout(1) do
+            Timeout.timeout(1) do
               pid = Process.waitpid(-1, flags)
               r = [pid, $?.exitstatus] if pid
             end
