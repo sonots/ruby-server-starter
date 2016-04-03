@@ -1,3 +1,9 @@
+## 0.2.0 (2016/04/03)
+
+Enhancements:
+
+* Add puma support
+
 ## 0.1.5 (2016/04/03)
 
 Fixes:
