@@ -1,2 +1,2 @@
 #!/bin/sh
-bundle exec start_server.rb --restart --pid-file=log/start_server.pid --status-file=log/unicorn.stat
+bundle exec start_server.rb --restart --pid-file=log/start_server.pid --status-file=log/start_server.stat

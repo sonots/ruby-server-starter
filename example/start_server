@@ -6,7 +6,7 @@ bundle exec start_server.rb \
   --signal-on-hup=CONT \
   --signal-on-TERM=TERM \
   --pid-file=$(pwd)/log/start_server.pid \
-  --status-file=$(pwd)/log/unicorn.stat \
+  --status-file=$(pwd)/log/start_server.stat \
   --envdir=env \
   --enable-auto-restart \
   --auto-restart-interval=100 \

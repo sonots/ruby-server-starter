@@ -13,6 +13,6 @@ coverage
 .ruby-version
 pkg/*
 .tags
-unicorn.stat
+start_server.stat
 start_server.pid
 start_server.log
