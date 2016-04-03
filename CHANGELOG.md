@@ -1,3 +1,9 @@
+## 0.3.0 (2016/04/03)
+
+Fixes:
+
+* Fix a critial bug. It was not killing old workers on HUP :scream:
+
 ## 0.2.1 (2016/04/03)
 
 Fixes:
