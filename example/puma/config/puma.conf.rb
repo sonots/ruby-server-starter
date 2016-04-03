@@ -1,3 +1,6 @@
+require 'server/starter/puma_listener'
+listener = ::Server::Starter::PumaListener
+
 APP_ROOT = File.expand_path('../..', __FILE__)
 status_file = File.join(APP_ROOT, 'log/start_server.stat')
 
@@ -17,15 +20,13 @@ workers 2
 
 # Run puma via start_puma.rb to configure PUMA_INHERIT_\d ENV from SERVER_STARTER_PORT ENV as
 # $ bundle exec --keep-file-descriptors start_puma.rb puma -C config/puma.conf.rb config.ru
-if ENV['PUMA_INHERIT_0']
-  ENV.each do |k,v|
-    if k =~ /PUMA_INHERIT_\d+/
-      fd, url = v.split(":", 2)
-      bind url
-    end
+if ENV['SERVER_STARTER_PORT']
+  puma_inherits = listener.listen
+  puma_inherits.each do |puma_inherit|
+    bind puma_inherit[:url]
   end
 else
-  # Fallback if not running under Server::Starter
+  puts '[WARN] Fallback to 0.0.0.0:10080 since not running under Server::Starter'
   bind 'tcp://0.0.0.0:10080'
 end
 
