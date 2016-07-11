@@ -78,7 +78,7 @@ end
 
 # Puma
 
-Following is an example to run unicorn server under ```Server::Starter```.
+Following is an example to run puma server under ```Server::Starter```.
 
 The command line example:
 
