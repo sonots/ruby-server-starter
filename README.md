@@ -24,8 +24,13 @@ Following is an example to run unicorn server under ```Server::Starter```.
 The command line example:
 
 ```
-bundle exec start_server.rb --port=10080 --signal-on-hup=CONT --dir=/path/to/app \
-  --status-file=/path/to/app/log/start_server.stat --pid-file=/path/to/app/log/start_server.pid -- \
+bundle exec start_server.rb \
+  --port=10080 \
+  --signal-on-hup=CONT \
+  --dir=/path/to/app \
+  --status-file=/path/to/app/log/start_server.stat \
+  --pid-file=/path/to/app/log/start_server.pid \
+  -- \
   bundle exec --keep-file-descriptors unicorn -c config/unicorn.conf.rb config.ru
 ```
 
@@ -68,6 +73,91 @@ after_fork do |server, worker|
   # when doing a transparent upgrade.  The last worker spawned
   # will then kill off the old master process with a SIGQUIT.
   listener.slow_start(server, worker, status_file)
+end
+```
+
+# Puma
+
+Following is an example to run unicorn server under ```Server::Starter```.
+
+The command line example:
+
+```
+bundle exec start_server.rb \
+  --port=0.0.0.0:10080 \
+  --dir=/path/to/app \
+  --interval=1 \
+  --signal-on-hup=TERM \
+  --signal-on-TERM=TERM \
+  --pid-file=/path/to/app/log/start_server.pid \
+  --status-file=/path/to/app/log/start_server.stat \
+  --envdir=env \
+  --enable-auto-restart \
+  --auto-restart-interval=100 \
+  --kill-old-delay=10 \
+  --backlog=100 \
+  -- \
+  bundle exec --keep-file-descriptors start_puma.rb puma -C config/puma.rb config.ru
+```
+
+An example of config/puma.rb:
+
+```ruby
+
+require 'server/starter/puma_listener'
+listener = ::Server::Starter::PumaListener
+
+APP_ROOT = File.expand_path('../..', __FILE__)
+status_file = File.join(APP_ROOT, 'log/start_server.stat')
+
+pidfile File.join(APP_ROOT, 'log/puma.pid')
+state_path File.join(APP_ROOT, 'log/puma.state')
+
+# prune_bundler # need to tweak lib/puma/launher to add { close_others: false } opts to Kernel.exec
+preload_app!
+
+# Configure "min" to be the minimum number of threads to use to answer
+# requests and "max" the maximum.
+# The default is "0, 16".
+threads 0, 16
+
+# How many worker processes to run. The default is "0".
+workers 2
+
+# Run puma via start_puma.rb to configure PUMA_INHERIT_\d ENV from SERVER_STARTER_PORT ENV as
+# $ bundle exec --keep-file-descriptors start_puma.rb puma -C config/puma.conf.rb config.ru
+if ENV['SERVER_STARTER_PORT']
+  puma_inherits = listener.listen
+  puma_inherits.each do |puma_inherit|
+    bind puma_inherit[:url]
+  end
+else
+  puts '[WARN] Fallback to 0.0.0.0:10080 since not running under Server::Starter'
+  bind 'tcp://0.0.0.0:10080'
+end
+
+# Code to run before doing a restart. This code should
+# close log files, database connections, etc.
+# This can be called multiple times to add code each time.
+on_restart do
+  puts 'On restart...'
+end
+
+# Code to run when a worker boots to setup the process before booting
+# the app. This can be called multiple times to add hooks.
+on_worker_boot do
+  defined?(ActiveRecord::Base) and ActiveRecord::Base.connection.disconnect!
+end
+
+# Code to run when a worker boots to setup the process after booting
+# the app. This can be called multiple times to add hooks.
+after_worker_boot do
+  defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
+end
+
+# Code to run when a worker shutdown.
+on_worker_shutdown do
+  puts 'On worker shutdown...'
 end
 ```
 
