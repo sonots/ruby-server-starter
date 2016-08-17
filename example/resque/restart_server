@@ -1,0 +1,7 @@
+#!/bin/sh
+# sends SIGHUP
+bundle exec start_server.rb \
+  --restart \
+  --dir=$(pwd) \
+  --pid-file=$(pwd)/log/start_server.pid \
+  --status-file=$(pwd)/log/start_server.stat
