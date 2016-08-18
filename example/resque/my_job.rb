@@ -1,4 +1,4 @@
-class TestWorker
+class MyJob
   @queue = :test
 
   def self.perform(params)
