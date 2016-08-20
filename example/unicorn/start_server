@@ -13,4 +13,4 @@ bundle exec start_server.rb \
   --kill-old-delay=1 \
   --backlog=100 \
   -- \
-  bundle exec --keep-file-descriptors unicorn -c config/unicorn.conf config.ru 2>&1
+  bundle exec --keep-file-descriptors unicorn -c config/unicorn.conf.rb config.ru 2>&1
