@@ -1,0 +1,6 @@
+source "http://rubygems.org"
+
+gem 'server-starter', path: '../../'
+gem 'resque_starter', git: 'https://github.com/sonots/resque_starter'
+gem 'pry'
+gem 'pry-nav'

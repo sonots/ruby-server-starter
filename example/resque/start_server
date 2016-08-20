@@ -1,0 +1,14 @@
+#!/bin/sh
+bundle exec start_server.rb \
+  --dir=$(pwd) \
+  --interval=1 \
+  --signal-on-hup=CONT \
+  --signal-on-TERM=TERM \
+  --pid-file=$(pwd)/log/start_server.pid \
+  --status-file=$(pwd)/log/start_server.stat \
+  --envdir=env \
+  --enable-auto-restart \
+  --auto-restart-interval=100 \
+  --kill-old-delay=1 \
+  -- \
+  bundle exec --keep-file-descriptors start_resque.rb -c config/resque.conf.rb 2>&1
