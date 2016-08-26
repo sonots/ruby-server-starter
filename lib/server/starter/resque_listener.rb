@@ -17,9 +17,6 @@ class Server::Starter
       if old_pid = pids[old_gen.to_s]
         sig = (worker_nr + 1) >= starter.num_workers ? :QUIT : :TTOU
         Process.kill(sig, old_pid.to_i)
-        while starter.old_workers.size > starter.num_workers
-          sleep 0.1
-        end
       end
     rescue Errno::ENOENT, Errno::ESRCH => e
       $stderr.puts "#{e.class} #{e.message}"

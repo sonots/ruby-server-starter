@@ -14,11 +14,15 @@ status_file File.join(APP_ROOT, 'log/start_resque.stat')
 start_server_status_file = File.join(APP_ROOT, 'log/start_server.stat')
 
 before_fork do |starter, worker, worker_nr|
-  defined?(ActiveRecord::Base) and ActiveRecord::Base.connection.disconnect!
+  defined?(ActiveRecord::Base) and
+    ActiveRecord::Base.connection.disconnect!
+
+  sleep 1
 end
 
 after_fork do |starter, worker, worker_nr|
-  defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
+  defined?(ActiveRecord::Base) and
+    ActiveRecord::Base.establish_connection
 
   # Graceful restart
   #

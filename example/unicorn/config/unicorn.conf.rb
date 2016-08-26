@@ -14,7 +14,8 @@ unless fd
 end
  
 before_fork do |server, worker|
-  defined?(ActiveRecord::Base) and ActiveRecord::Base.connection.disconnect!
+  defined?(ActiveRecord::Base) and
+    ActiveRecord::Base.connection.disconnect!
  
   # Throttle the master from forking too quickly by sleeping.  Due
   # to the implementation of standard Unix signal handlers, this
@@ -24,7 +25,8 @@ before_fork do |server, worker|
 end
  
 after_fork do |server, worker|
-  defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
+  defined?(ActiveRecord::Base) and
+    ActiveRecord::Base.establish_connection
 
   # This is optional
   #
