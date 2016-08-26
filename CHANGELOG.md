@@ -1,3 +1,9 @@
+## 0.3.1 (2016/08/26)
+
+Enhancements:
+
+* Support [resque_starter](https://github.com/sonots/resque_starter)
+
 ## 0.3.0 (2016/04/03)
 
 Fixes:
