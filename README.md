@@ -189,7 +189,7 @@ en_US.UTF-8
 
 which are equivalent with `evn RAILS_ENV=production LANG=en_US.UTF-8` in shell.
 
-Please note that environment variables are updated on restarting, which means are not deleted.
+Please note that environment variables are updated on restarting, which means deleted files are not affected.
 
 ## See Also
 
