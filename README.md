@@ -161,6 +161,36 @@ on_worker_shutdown do
 end
 ```
 
+## Options
+
+To be written
+
+### --envdir [dir]
+
+Configure environment variables from files on given directory, and reload on restarting.
+
+The directory structure is inspired from [envdir](https://cr.yp.to/daemontools/envdir.html) of daemontools.
+The filename is the environment variable name, and its content (first line) is the value of the environment variable.
+
+Example)
+
+```
+$ find env
+env/RAILS_ENV
+env/LANG
+```
+
+```
+$ cat env/RAILS_ENV
+production
+$ cat env/LANG
+en_US.UTF-8
+```
+
+which are equivalent with `evn RAILS_ENV=production LANG=en_US.UTF-8` in shell.
+
+Please note that environment variables are updated on restarting, which means are not deleted.
+
 ## See Also
 
 * [「Server::Starterに対応するとはどういうことか」の補足](http://blog.livedoor.jp/sonots/archives/40248661.html) (Japanese)
