@@ -187,7 +187,7 @@ $ cat env/LANG
 en_US.UTF-8
 ```
 
-which are equivalent with `evn RAILS_ENV=production LANG=en_US.UTF-8` in shell.
+which are equivalent with `env RAILS_ENV=production LANG=en_US.UTF-8` in shell.
 
 Please note that environment variables are updated on restarting, which means deleted files are not affected.
 
