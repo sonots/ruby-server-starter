@@ -1,4 +1,5 @@
 require 'server/starter/version'
+require 'puma/const'
 
 class Server::Starter
   class PumaListener
@@ -11,7 +12,12 @@ class Server::Starter
         else
           url = "unix://#{path_or_port}"
         end
-        ENV["PUMA_INHERIT_#{i}"] = "#{fd}:#{url}"
+        if Gem::Version.new(Puma::Const::PUMA_VERSION) < Gem::Version.new('5')
+          ENV["PUMA_INHERIT_#{i}"] = "#{fd}:#{url}"
+        else
+          ENV['LISTEN_FDS'] = '1'
+          ENV['LISTEN_PID'] = Process.pid.to_s
+        end
         { fd: fd, url: url }
       end
     end
