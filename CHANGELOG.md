@@ -1,3 +1,9 @@
+## 0.3.2 (2022/05/09)
+
+Enhancements:
+
+* Support puma5 (thanks to limitusus)
+
 ## 0.3.1 (2016/08/26)
 
 Enhancements:
